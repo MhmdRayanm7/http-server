@@ -21,7 +21,11 @@
   },
   "homepage": "https://github.com/MhmdRayanm7/http-server#readme",
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^26.2.0",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
   }
 }
