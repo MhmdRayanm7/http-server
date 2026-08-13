@@ -1,16 +1,11 @@
 import express from "express";
-import { Request, Response } from "express";
+import { handlerReadiness } from "../api/readiness.js";
+
 
 const app = express();
 const PORT = 8080;
 
 app.use("/app", express.static("./src/app"));
-
-// Handles readiness checks for the server.
-function handlerReadiness(_req: Request, res: Response): void {
-  res.set("Content-Type", "text/plain; charset=utf-8");
-  res.send("OK");
-}
 
 app.get("/healthz", handlerReadiness);
 
