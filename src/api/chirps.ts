@@ -9,10 +9,7 @@ export function handlerChirpsValidate(req: Request, res: Response) {
   const params: Parameters = req.body;
 
   if (params.body.length > maxChirpLength) {
-    res.status(400).json({
-      error: "Chirp is too long",
-    });
-    return;
+     throw new Error("Chirp is too long");
   }
 
   let wordsOfBody = params.body.split(" ");

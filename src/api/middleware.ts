@@ -1,6 +1,20 @@
 import type { NextFunction, Request, Response } from "express";
 import { config } from "../config.js";
 
+export function middlewareErrorHandler(
+  err: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  console.log(err.message);
+  res.status(500).json({
+    error: "Something went wrong on our end",
+  });
+  next()
+}
+
+
 export async function middlewareLogResponses(
   req: Request,
   res: Response,
@@ -15,7 +29,11 @@ export async function middlewareLogResponses(
   next();
 }
 
-export function middlewareMetricsInc(req: Request, res: Response, next: NextFunction) {
-  config.fileserverHits ++;
+export function middlewareMetricsInc(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  config.fileserverHits++;
   next();
 }
