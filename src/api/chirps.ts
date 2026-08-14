@@ -7,7 +7,6 @@ export function handlerChirpsValidate(req: Request, res: Response) {
     body += chunk.toString();
   });
 
-  // 3. Listen for end events
   req.on("end", () => {
     try {
       const parsedBody = JSON.parse(body);
