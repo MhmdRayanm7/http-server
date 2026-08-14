@@ -1,29 +1,21 @@
 import type { Request, Response } from "express";
 
 export function handlerChirpsValidate(req: Request, res: Response) {
-  let body = "";
+  type Parameters  = {
+    body: string;
+  };
 
-  req.on("data", (chunk) => {
-    body += chunk.toString();
-  });
+  const maxChirpLength = 140;
+  const params: Parameters  = req.body;
 
-  req.on("end", () => {
-    try {
-      const parsedBody = JSON.parse(body);
+  if (params.body.length > maxChirpLength) {
+    res.status(400).json({
+      error: "Chirp is too long",
+    });
+    return;
+  }
 
-      if (parsedBody.body.length > 140) {
-        res.status(400).json({
-          error: "Chirp is too long",
-        });
-        return;
-      }
-      res.status(200).json({
-        valid: true,
-      });
-    } catch {
-      res.status(400).json({
-        error: "Something went wrong",
-      });
-    }
+  res.status(200).json({
+    valid: true,
   });
 }
