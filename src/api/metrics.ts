@@ -3,6 +3,14 @@ import { config } from "../config.js";
 
 
 export function handlerMetrics(req: Request, res: Response) {
-  res.set("Content-Type", "text/plain"); // (not necessary)  automatically detects the type of data passed into it and sets an appropriate
-  res.send(`Hits: ${config.fileserverHits}`);
+  res.set("Content-Type", "text/html; charset=utf-8"); 
+
+  const htmlCon = `<html>
+  <body>
+    <h1>Welcome, Chirpy Admin</h1>
+    <p>Chirpy has been visited ${config.fileserverHits} times!</p>
+  </body>
+</html>`
+
+  res.send(htmlCon);
 }
