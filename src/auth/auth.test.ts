@@ -22,6 +22,12 @@ describe("Password Hashing", () => {
 
     expect(result).toBe(false);
   });
+
+  it("should return false for an invalid hash", async () => {
+    const result = await checkPasswordHash(password, "invalid-hash");
+
+    expect(result).toBe(false);
+  });
 });
 
 describe("JWT", () => {
@@ -52,6 +58,12 @@ describe("JWT", () => {
   it("should reject a token signed with the wrong secret", () => {
     expect(() => {
       validateJWT(validToken, wrongSecret);
+    }).toThrow(UnauthorizedError);
+  });
+
+  it("should reject an invalid token", () => {
+    expect(() => {
+      validateJWT("invalid.token.string", secret);
     }).toThrow(UnauthorizedError);
   });
 });

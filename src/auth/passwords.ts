@@ -1,12 +1,20 @@
 import argon2 from "argon2";
 
 export async function hashPassword(password: string): Promise<string> {
-  return await argon2.hash(password);
+  return argon2.hash(password);
 }
 
 export async function checkPasswordHash(
   password: string,
   hash: string,
 ): Promise<boolean> {
-  return await argon2.verify(hash, password);
+  if (!password) {
+    return false;
+  }
+
+  try {
+    return await argon2.verify(hash, password);
+  } catch {
+    return false;
+  }
 }
