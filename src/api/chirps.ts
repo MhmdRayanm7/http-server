@@ -43,9 +43,14 @@ export async function handlerChirpsGetOne(
   req: Request<{ chirpId: string }>,
   res: Response,
 ) {
+  if (typeof req.params.chirpId !== "string") {
+    throw new BadRequestError("Invalid chirp ID");
+  }
+
   const chirp = await getChirpById(req.params.chirpId);
   if (!chirp) {
     throw new NotFoundError("Chirp not found !");
   }
+
   res.status(200).json(chirp);
 }
