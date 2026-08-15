@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { config } from "../config.js";
 
 
-export function handlerMetrics(req: Request, res: Response) {
+export async function handlerMetrics(req: Request, res: Response) {
   res.set("Content-Type", "text/html; charset=utf-8"); 
 
   const htmlCon = `<html>

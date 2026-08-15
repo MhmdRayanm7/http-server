@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 
-export function handlerChirpsValidate(req: Request, res: Response) {
+export async function handlerChirpsValidate(req: Request, res: Response) {
   type Parameters = {
     body: string;
   };

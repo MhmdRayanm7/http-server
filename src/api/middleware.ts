@@ -11,7 +11,6 @@ export function middlewareErrorHandler(
   res.status(500).json({
     error: "Something went wrong on our end",
   });
-  next()
 }
 
 
