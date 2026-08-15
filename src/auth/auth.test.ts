@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll } from "vitest";
+import type { Request } from "express";
 import { hashPassword, checkPasswordHash } from "./passwords.js";
-import { makeJWT, validateJWT } from "./tokens.js";
+import { getBearerToken, makeJWT, validateJWT } from "./tokens.js";
 import { UnauthorizedError } from "../errors/errors.js";
 
 describe("Password Hashing", () => {
@@ -65,5 +66,47 @@ describe("JWT", () => {
     expect(() => {
       validateJWT("invalid.token.string", secret);
     }).toThrow(UnauthorizedError);
+  });
+});
+
+describe("getBearerToken", () => {
+  it("should return the token from a valid Bearer header", () => {
+    const req = {
+      get: () => "Bearer test-token-123",
+    } as unknown as Request;
+
+    const token = getBearerToken(req);
+
+    expect(token).toBe("test-token-123");
+  });
+
+  it("should throw when the Authorization header is missing", () => {
+    const req = {
+      get: () => undefined,
+    } as unknown as Request;
+
+    expect(() => {
+      getBearerToken(req);
+    }).toThrow(UnauthorizedError);
+  });
+
+  it("should throw when the authorization scheme is not Bearer", () => {
+    const req = {
+      get: () => "Basic abc123",
+    } as unknown as Request;
+
+    expect(() => {
+      getBearerToken(req);
+    }).toThrow(UnauthorizedError);
+  });
+
+  it("should handle extra whitespace in the Authorization header", () => {
+    const req = {
+      get: () => "   Bearer     test-token-123   ",
+    } as unknown as Request;
+
+    const token = getBearerToken(req);
+
+    expect(token).toBe("test-token-123");
   });
 });

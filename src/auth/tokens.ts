@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import type { JwtPayload } from "jsonwebtoken";
-
+import { type Request, type Response } from "express";
 import { UnauthorizedError } from "../errors/errors.js";
 
 const TOKEN_ISSUER = "chirpy";
@@ -45,4 +45,28 @@ export function validateJWT(tokenString: string, secret: string): string {
   } catch {
     throw new UnauthorizedError("Invalid or expired token");
   }
+}
+
+export function getBearerToken(req: Request): string {
+  const authHeader = req.get("Authorization");
+
+  if (!authHeader) {
+    throw new UnauthorizedError("Missing Authorization header");
+  }
+
+  const parts = authHeader.trim().split(/\s+/);
+
+  if (parts[0] !== "Bearer") {
+    throw new UnauthorizedError("Invalid authorization scheme");
+  }
+
+  if (!parts[1]) {
+    throw new UnauthorizedError("Missing bearer token");
+  }
+
+  if (parts.length !== 2) {
+    throw new UnauthorizedError("Invalid Authorization header");
+  }
+
+  return parts[1];
 }
