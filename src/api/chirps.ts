@@ -1,15 +1,19 @@
 import type { Request, Response } from "express";
 import { BadRequestError, NotFoundError } from "../errors/errors.js";
 import { createChirp, getChirpById, getChirps } from "../db/queries/chirps.js";
+import { getBearerToken, validateJWT } from "../auth/tokens.js";
+import { config } from "../config.js";
 
 export async function handlerChirpsCreate(req: Request, res: Response) {
   type Parameters = {
     body: string;
-    userId: string;
   };
 
   const maxChirpLength = 140;
+  const token = getBearerToken(req);
   const params: Parameters = req.body;
+
+  const userId = validateJWT(token, config.api.jwtSecret);
 
   if (params.body.length > maxChirpLength) {
     throw new BadRequestError(
@@ -17,18 +21,18 @@ export async function handlerChirpsCreate(req: Request, res: Response) {
     );
   }
 
-  let wordsOfBody = params.body.split(" ");
+  const wordsOfBody = params.body.split(" ");
   const badWords = new Set(["kerfuffle", "sharbert", "fornax"]);
 
   const cleanedWords = wordsOfBody.map((word) => {
     return badWords.has(word.toLowerCase()) ? "****" : word;
   });
 
-  params.body = cleanedWords.join(" ");
+  const cleanedBody = cleanedWords.join(" ");
 
   const createdChirp = await createChirp({
-    body: params.body,
-    userId: params.userId,
+    body: cleanedBody,
+    userId ,
   });
 
   res.status(201).json(createdChirp);
