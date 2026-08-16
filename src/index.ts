@@ -14,24 +14,28 @@ import {
 import { handlerReadiness } from "./api/readiness.js";
 import { handlerMetrics } from "./api/metrics.js";
 import { handlerReset } from "./api/reset.js";
+
 import { handlerUsersCreate, handlerUsersUpdate } from "./api/users.js";
+
 import { handlerLogin } from "./api/login.js";
 import { handlerRefresh } from "./api/refresh.js";
 import { handlerRevoke } from "./api/revoke.js";
 
 import {
   handlerChirpsCreate,
+  handlerChirpsDelete,
   handlerChirpsGet,
   handlerChirpsGetOne,
 } from "./api/chirps.js";
 
 const PORT = 8080;
 
-// Run database migrations before starting the server
+// Database migrations
 const migrationClient = postgres(config.db.url, { max: 1 });
 
 await migrate(drizzle(migrationClient), config.db.migrationConfig);
 
+// Express app
 const app = express();
 
 // Global middleware
@@ -55,7 +59,7 @@ app.post("/admin/reset", (req, res, next) => {
   Promise.resolve(handlerReset(req, res)).catch(next);
 });
 
-// Auth
+// Users
 app.post("/api/users", (req, res, next) => {
   Promise.resolve(handlerUsersCreate(req, res)).catch(next);
 });
@@ -64,6 +68,7 @@ app.put("/api/users", (req, res, next) => {
   Promise.resolve(handlerUsersUpdate(req, res)).catch(next);
 });
 
+// Authentication
 app.post("/api/login", (req, res, next) => {
   Promise.resolve(handlerLogin(req, res)).catch(next);
 });
@@ -89,9 +94,14 @@ app.get("/api/chirps/:chirpId", (req, res, next) => {
   Promise.resolve(handlerChirpsGetOne(req, res)).catch(next);
 });
 
-// Error handler must be registered after all routes
+app.delete("/api/chirps/:chirpId", (req, res, next) => {
+  Promise.resolve(handlerChirpsDelete(req, res)).catch(next);
+});
+
+// Error middleware must stay after all routes
 app.use(middlewareErrorHandler);
 
+// Start server
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });
