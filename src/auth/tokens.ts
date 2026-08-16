@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import type { JwtPayload } from "jsonwebtoken";
 import { type Request, type Response } from "express";
 import { UnauthorizedError } from "../errors/errors.js";
+import { randomBytes } from "node:crypto";
 
 const TOKEN_ISSUER = "chirpy";
 const TOKEN_ALGORITHM = "HS256";
@@ -69,4 +70,8 @@ export function getBearerToken(req: Request): string {
   }
 
   return parts[1];
+}
+
+export function makeRefreshToken() : string {
+  return randomBytes(32).toString('hex');
 }
