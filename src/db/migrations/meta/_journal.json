@@ -29,6 +29,20 @@
       "when": 1786894953575,
       "tag": "0003_concerned_the_hood",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1786984977512,
+      "tag": "0004_lonely_quicksilver",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1786985019461,
+      "tag": "0005_minor_nightmare",
+      "breakpoints": true
     }
   ]
 }
