@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import type { Request } from "express";
 import { hashPassword, checkPasswordHash } from "./passwords.js";
-import { getBearerToken, makeJWT, validateJWT } from "./tokens.js";
+import { getAPIKey, getBearerToken, makeJWT, validateJWT } from "./tokens.js";
 import { UnauthorizedError } from "../errors/errors.js";
 
 describe("Password Hashing", () => {
@@ -108,5 +108,48 @@ describe("getBearerToken", () => {
     const token = getBearerToken(req);
 
     expect(token).toBe("test-token-123");
+  });
+});
+
+
+describe("getAPIKey", () => {
+  it("should return the API key from a valid Authorization header", () => {
+    const req = {
+      get: () => "ApiKey test-key-123",
+    } as unknown as Request;
+
+    const key = getAPIKey(req);
+
+    expect(key).toBe("test-key-123");
+  });
+
+  it("should throw when the Authorization header is missing", () => {
+    const req = {
+      get: () => undefined,
+    } as unknown as Request;
+
+    expect(() => {
+      getAPIKey(req);
+    }).toThrow(UnauthorizedError);
+  });
+
+  it("should throw when the authorization scheme is not ApiKey", () => {
+    const req = {
+      get: () => "Bearer test-key-123",
+    } as unknown as Request;
+
+    expect(() => {
+      getAPIKey(req);
+    }).toThrow(UnauthorizedError);
+  });
+
+  it("should handle extra whitespace", () => {
+    const req = {
+      get: () => "   ApiKey     test-key-123   ",
+    } as unknown as Request;
+
+    const key = getAPIKey(req);
+
+    expect(key).toBe("test-key-123");
   });
 });

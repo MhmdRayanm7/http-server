@@ -1,7 +1,9 @@
 import type { Request, Response } from "express";
 
 import { upgradeUserToChirpyRed } from "../db/queries/users.js";
-import { NotFoundError } from "../errors/errors.js";
+import { NotFoundError, UnauthorizedError } from "../errors/errors.js";
+import { getAPIKey } from "../auth/tokens.js";
+import { config } from "../config.js";
 
 export async function handlerPolkaWebhook(req: Request, res: Response) {
   type Parameters = {
@@ -10,6 +12,12 @@ export async function handlerPolkaWebhook(req: Request, res: Response) {
       userId: string;
     };
   };
+
+  const apiKey = getAPIKey(req);
+
+  if (apiKey !== config.api.polkaKey) {
+    throw new UnauthorizedError("Invalid API key");
+  }
 
   const params: Parameters = req.body;
 
