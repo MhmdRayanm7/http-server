@@ -49,11 +49,27 @@ export async function handlerChirpsCreate(req: Request, res: Response) {
 
 export async function handlerChirpsGet(req: Request, res: Response) {
   const authorIdQuery = req.query.authorId;
+  const sortQuery = req.query.sort;
+
+  let sortOrder: "asc" | "desc" = "asc";
   let authorId: string | undefined;
+
+  if (sortQuery === "desc") {
+    sortOrder = "desc";
+  }
+
   if (typeof authorIdQuery === "string") {
     authorId = authorIdQuery;
   }
+
   const chirps = await getChirps(authorId);
+
+  chirps.sort((a, b) => {
+    const timeDifference = a.createdAt.getTime() - b.createdAt.getTime();
+
+    return sortOrder === "asc" ? timeDifference : -timeDifference;
+  });
+
   res.status(200).json(chirps);
 }
 
