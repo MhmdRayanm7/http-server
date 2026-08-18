@@ -48,7 +48,12 @@ export async function handlerChirpsCreate(req: Request, res: Response) {
 }
 
 export async function handlerChirpsGet(req: Request, res: Response) {
-  const chirps = await getChirps();
+  const authorIdQuery = req.query.authorId;
+  let authorId: string | undefined;
+  if (typeof authorIdQuery === "string") {
+    authorId = authorIdQuery;
+  }
+  const chirps = await getChirps(authorId);
   res.status(200).json(chirps);
 }
 
